@@ -1,0 +1,191 @@
+definitions:
+  handlers.MusicRequest:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /songs:
+    get:
+      consumes:
+      - application/json
+      description: Fetch songs of a specific group with optional filters
+      parameters:
+      - description: Name of the song
+        in: query
+        name: name
+        type: string
+      - description: Name of the group
+        in: query
+        name: group_name
+        type: string
+      - description: Text contained in the song
+        in: query
+        name: text
+        type: string
+      - description: Release date of the song
+        in: query
+        name: release_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of songs
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid parameters
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get songs by group
+      tags:
+      - Songs
+    post:
+      consumes:
+      - application/json
+      description: Add a new song to the database, including its group and details
+        fetched from an external API
+      parameters:
+      - description: Request body containing group and song names
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.MusicRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song added successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid JSON format or missing fields
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Add a new song
+      tags:
+      - Songs
+  /songs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a song by its ID
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song deleted successfully
+          schema:
+            type: string
+        "404":
+          description: Song not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a song
+      tags:
+      - Songs
+    put:
+      consumes:
+      - application/json
+      description: Update the fields of an existing song by its ID
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Fields to update (e.g., name, release_date, text)
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song updated successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid request body or date format
+          schema:
+            type: string
+        "404":
+          description: Song not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a song
+      tags:
+      - Songs
+  /songs/{id}/text:
+    get:
+      consumes:
+      - application/json
+      description: Fetch the text of a specific song by ID, paginated by a fixed number
+        of verses
+      parameters:
+      - description: Song ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Page number (starting from 1)
+        in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Paginated verses of the song
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid parameters
+          schema:
+            type: string
+        "404":
+          description: Song not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get song text by ID and paginate verses
+      tags:
+      - Songs
+swagger: "2.0"

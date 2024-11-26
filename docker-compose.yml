@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    container_name: server
+  primarydb:
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 32432:5432
